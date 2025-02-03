@@ -20,6 +20,6 @@
         "name": "Organisation",
         "email": "office@organisation.com"
     },
-    "creationLogFilePath": "path to creation log (if one exists)"
-    
+    "creationLogFilePath": "path to creation log (if one exists)",
+    "linksHTTPSMode": true
 }

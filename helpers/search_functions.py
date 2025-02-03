@@ -48,6 +48,7 @@ def search(request: Request, url, collection=None, bbox=None, datetime=None, ids
                 result = response_mapping.map_solr_to_api(response.json(), url, method, "200", request)
                 numberReturned = result["numberReturned"] if "numberReturned" in result.keys() else 1
                 return links.add_search_links(result, request, start, numberMatched, numberReturned, limit)
+            # post search
             result = response_mapping.map_solr_to_api(response.json()["response"], url, method, "200", request)
             result = links.add_search_links(result, request, start, result["numberMatched"], result["numberReturned"], limit)
             response = links.add_query_params_to_post_response_links(result, {**query_params, **other_params})
@@ -57,5 +58,5 @@ def search(request: Request, url, collection=None, bbox=None, datetime=None, ids
     except HTTPException as ex:
         raise ex
     except Exception as ex:
-            return errorHandler.errorResponse(None, None, ex, serverError = True)
+        return errorHandler.errorResponse(None, None, ex, serverError = True)
 

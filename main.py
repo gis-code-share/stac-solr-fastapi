@@ -14,7 +14,7 @@ from starlette.responses import FileResponse
 import logging
 logging.basicConfig(filename='logs/stacapi.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M %p', level=logging.INFO)
 
-with open(".\\configuration\\conf.json") as f:
+with open(".\\configuration\\conf_local.json") as f:
     config = json.load(f)
 
 port = config["port"]

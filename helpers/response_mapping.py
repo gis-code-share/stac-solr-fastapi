@@ -7,7 +7,7 @@ from helpers import links
 with open('.\\configuration\\map.json', 'r') as file:
     global_map = json.load(file)
 
-with open(".\\configuration\\conf.json") as f:
+with open(".\\configuration\\conf_local.json") as f:
     config = json.load(f)
 
 

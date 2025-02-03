@@ -1,0 +1,9 @@
+ciso8601==2.3.1
+fastapi==0.115.8
+pydantic==1.10.7
+pystac==1.10.1
+pytest==7.3.1
+PyYAML==6.0.2
+Requests==2.32.3
+starlette==0.45.3
+uvicorn==0.34.0

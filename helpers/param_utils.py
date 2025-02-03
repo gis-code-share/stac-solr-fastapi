@@ -59,7 +59,7 @@ def map_search_body(body):
 # check limit and start
 def check_if_value_is_valid(value, name, default):
     if value != None and is_numeric(value) and int(value) < 0:
-        raise HTTPException(400, name + " smaller than 0 prohibited")
+        raise HTTPException(400, str(name) + " smaller than 0 prohibited")
     if value == None: return default
     if '?' in str(value): value = value.replace('?', '')
     if not is_numeric(value): return default

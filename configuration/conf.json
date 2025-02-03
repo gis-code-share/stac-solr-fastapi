@@ -1,0 +1,25 @@
+{
+    "host": "your-host",
+    "port": 9063,
+    "api_root": "/api/stac/v1",
+    "public_url_https": "https://your-public-url.com/api/stac/v1/",
+    "public_url_http": "http://your-public-url.com/api/stac/v1/",
+    "solr_connection": "http://solr.ip:port/suche/stac/solr-node",
+    "stac_browser_url": "https://stac-browser-url.com/",
+    "self_hosted_swagger_url": "https://your-swagger-instance/swagger/stac",
+    "default_limit": 10,
+    "conformsTo": [
+        "https://api.stacspec.org/v1.0.0/core",
+        "https://api.stacspec.org/v1.0.0/collections",
+        "https://api.stacspec.org/v1.0.0/ogcapi-features",
+        "https://api.stacspec.org/v1.0.0-rc.1/item-search#sortby",
+        "https://api.stacspec.org/v1.0.0/item-search",
+        "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson"
+    ],
+    "apiContact": {
+        "name": "Organisation",
+        "email": "office@organisation.com"
+    },
+    "creationLogFilePath": "path to creation log (if one exists)"
+    
+}

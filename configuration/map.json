@@ -1,0 +1,82 @@
+{
+    "paths": {
+        "/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "response": ["response", "docs", 0, "json:json_string"]
+                    }
+                }
+            }
+        },
+        "/search": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "start": "",
+                        "numFoundExact": "",
+                        "numberMatched": "numFound",
+                        "features": ["list:features", "properties", "json:json_string"],
+                        "numberReturned": "len:features"
+                    }
+                }
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "start": "",
+                        "numFoundExact": "",
+                        "numberMatched": "numFound",
+                        "features": ["list:features", "properties", "json:json_string"],
+                        "numberReturned": "len:features"
+                    }
+                }
+            }
+        },
+        "/collections": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "start": "",
+                        "type": "",
+                        "numFound": "",
+                        "numFoundExact": "",
+                        "collections": ["list:features", "properties", "json:json_string"],
+                        "features": ""
+                    }
+                }
+            }
+        },
+        "/collections/{collectionId}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "response": ["features", 0, "properties", "json:json_string"]
+                    }
+                }
+            }
+        },
+        "/collections/{collectionId}/items": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "start": "",
+                        "numFoundExact": "",
+                        "numberMatched": "numFound",
+                        "features": ["list:features", "properties", "json:json_string"],
+                        "numberReturned": "len:features"
+                    }
+                }
+            }
+        },
+        "/collections/{collectionId}/items/{itemId}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "response": ["features", 0, "properties", "json:json_string"]
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+.vscode
+start_stacapi.cmd
+save_open_api_to_yaml.py
+configuration/conf_local.json
+configuration/conf_test.json
+helpers/__pycache__
+openAPI/openapi.yaml
+
+tests
+logs/create_dynamic_catalog.log
+__pycache__
+.pytest_cache

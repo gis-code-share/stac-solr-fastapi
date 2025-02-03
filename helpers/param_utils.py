@@ -4,7 +4,7 @@ import json
 import re
 from ciso8601 import parse_datetime
 
-with open(".\\configuration\\conf_local.json") as f:
+with open(".\\configuration\\conf.json") as f:
     config = json.load(f)
 import logging
 logging.basicConfig(filename='logs/stacapi.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M %p', level=logging.INFO)

@@ -5,7 +5,7 @@ import re
 from .models import SearchParameters
 from ciso8601 import parse_datetime
 
-with open(".\\configuration\\conf_test.json") as f:
+with open(".\\configuration\\conf.json") as f:
     config = json.load(f)
     
 import logging

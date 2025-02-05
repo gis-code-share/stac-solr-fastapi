@@ -11,6 +11,7 @@ with open(".\\configuration\\conf.json") as f:
 @pytest.fixture
 def test_data():
     root = config["api_root"]
+    tested_second_collection_id = "None"
     
     response = client.get(root + "/collections")
     tested_collection_id = response.json()["collections"][0]["id"]

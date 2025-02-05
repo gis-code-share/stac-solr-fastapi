@@ -1,12 +1,13 @@
 from pystac import Link, RelType
 from fastapi import Request
 import json
-from .models import LinkParameters
 from helpers import param_utils
+from .models import LinkParameters
+
 import logging
 logging.basicConfig(filename='logs/stacapi.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M %p', level=logging.INFO)
 
-with open(".\\configuration\\conf.json") as f:
+with open(".\\configuration\\conf_test.json") as f:
     config = json.load(f)
 
 defaultLimit = config["default_limit"]

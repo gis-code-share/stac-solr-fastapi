@@ -5,7 +5,7 @@ import pytest
 
 client = TestClient(app)
 #pytest  --html-report=./tests/report.html
-with open(".\\configuration\\conf.json") as f:
+with open(".\\configuration\\conf_test.json") as f:
     config = json.load(f)
 
 @pytest.fixture

@@ -1,20 +1,19 @@
-from fastapi import FastAPI, Request, responses
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-import yaml
-from pathlib import Path
+from helpers import param_utils, models, errorHandler
+from route_functionality import base_functions, collection_functions, search_functions
 import uvicorn
-import requests
-from helpers import param_utils, solr_helper, models, links, errorHandler, response_mapping, search_functions
 import json
 
 from starlette.exceptions import HTTPException
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 import logging
+
 logging.basicConfig(filename='logs/stacapi.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M %p', level=logging.INFO)
 
-with open(".\\configuration\\conf.json") as f:
+with open(".\\configuration\\conf_test.json") as f:
     config = json.load(f)
 
 port = config["port"]
@@ -53,82 +52,44 @@ async def landing_page_root(request: Request):
 
 @app.get(root + "/")
 def landing_page(request: Request):
-    """ Landing page of STAC catalog """
-    try:
-        response = solr_helper.get(solr + "/")
-
-        if str(response.status_code).startswith('2'):
-            result =  response_mapping.map_solr_to_api(response.json(), request.url.path, request.method.lower(), "200", request)
-            result["conformsTo"] = config["conformsTo"]
-            return result
-        return errorHandler.errorResponse(response)
-    except HTTPException as ex:
-        raise ex
-    except Exception as ex:
-        return errorHandler.errorResponse(None, None, ex, serverError=True)
+    return base_functions.get_landing_page(request)
 
 @app.get(root + "/conformance")
 def conformance():
-    try:
-        result = {"conformsTo": config["conformsTo"]}
-        return result
-    except Exception as ex:
-        return errorHandler.errorResponse(None, None, ex, serverError=True)
+    return base_functions.get_conformance()
 
 @app.get(root + "/search")
 def search(request: Request, collections=None, bbox=None, datetime=None, ids=None, limit=None, start=0, sortby = None, sortdesc = 0):
-    return search_functions.search(request, request.url.path, collections, bbox, datetime, ids, limit, start, sortby, sortdesc)
+    sp = models.SearchParameters(request, bbox, datetime, collections, limit, ids, sortby, sortdesc, start)
+    return search_functions.search(sp)
 
 @app.post(root + "/search")
 def search(request: Request, searchBody: models.SearchBody):
-    bbox, collections, ids, sortby, sortdesc = param_utils.map_search_body(searchBody)
-    return search_functions.search(request, request.url.path, collections, bbox, searchBody.datetime, ids, searchBody.limit, searchBody.start, sortby, sortdesc)
-
+    sp = param_utils.map_search_body(searchBody)
+    sp.request = request
+    return search_functions.search(sp)
 
 @app.get(root + "/collections")
 def get_collections(request: Request, f = None, limit = None, start = 0):
-    try:
-        solr_request = solr + "/collections"
-        solr_request = param_utils.add_limit_and_start(solr_request, limit, start, default_limit = 30)
-        response = solr_helper.get(solr_request)
-
-        if str(response.status_code).startswith('2'):
-            numberMatched = response.json()["numFound"]
-            result = response_mapping.map_solr_to_api(response.json(), request.url.path, request.method.lower(), "200", request)
-            numberReturned = len(result["collections"])
-            return links.add_search_links(result, request, start, numberMatched, numberReturned, limit)
-        return errorHandler.errorResponse(response)
-
-    except HTTPException as ex:
-        raise ex
-    except Exception as ex:
-        return errorHandler.errorResponse(None, None, ex, serverError=True)
+    return collection_functions.get_all_collections(request, limit, start)
 
 get_one_collection_url = root + "/collections/{collectionId}"
 @app.get(get_one_collection_url)
 def get_one_collection(request: Request, collectionId: str):
-    try:
-        response = solr_helper.get(solr + "/collections?fq=id:" + collectionId)
-
-        if str(response.status_code).startswith('2'):
-            return response_mapping.map_solr_to_api(response.json(), get_one_collection_url, request.method.lower(), "200", request)
-        return errorHandler.errorResponse(response)
-    except HTTPException as ex:
-        raise ex
-    except Exception as ex:
-        return errorHandler.errorResponse(None, None, ex, serverError=True)
+    return collection_functions.get_one_collection(request, collectionId, get_one_collection_url)
 
 get_items_of_collection_url = root + "/collections/{collectionId}/items"
 @app.get(get_items_of_collection_url)
 def get_items_of_collection(request: Request, collectionId: str, bbox=None, datetime=None, ids = None, limit=None, start=0, sortby = None, sortdesc = 0):
-    return search_functions.search(request, get_items_of_collection_url, collectionId, bbox, datetime, ids, limit, start, sortby, sortdesc)
+    sp = models.SearchParameters(request, bbox, datetime, collectionId, limit, ids, sortby, sortdesc, start)
+    return search_functions.search(sp, get_items_of_collection_url)
 
 get_one_item_url = root + "/collections/{collectionId}/items/{itemId}"
 @app.get(get_one_item_url)
 def get_one_item(request: Request, collectionId: str, itemId: str):
-    return search_functions.search(request, get_one_item_url, collectionId, ids = itemId)
-
-
+    sp = models.SearchParameters()
+    sp.initCollsAndIds(request, collectionId, itemId)
+    return search_functions.search(sp, get_one_item_url)
 
 app.mount(root + "/api", StaticFiles(directory="openAPI"), name="openAPI")
 
@@ -138,32 +99,18 @@ def get_documentation_yaml(request: Request):
     return FileResponse("./openAPI/openapi.yaml", media_type='application/vnd.oai.openapi+yaml;version=3.0',filename="KAGIS_STAC_API.yaml")
 
 @app.get(root + "/api.html", response_class=RedirectResponse, status_code=302)
-async def redirect_documentation(request: Request):
+async def redirect_documentation():
     """ Redirects to self hosted swagger instance. """
     return config["self_hosted_swagger_url"]
 
 @app.get(root + "/browser", response_class=RedirectResponse, status_code=302)
-async def redirect_stac_browser(request: Request):
+async def redirect_stac_browser():
     """ Redirects to STAC Browser. """
     return config["stac_browser_url"]
 
 @app.get(root + "/creation-logs", include_in_schema=False)
-def get_logs(request: Request):
-    try:
-        log_path = Path(config["creationLogFilePath"])
-        if not log_path.exists():
-            raise HTTPException(status_code=404, detail="Creation log file not found")
-        
-        response = {}
-        with open(log_path, 'r', encoding='utf-8') as file:
-            for line in file:
-                if line and not json.loads(line): continue
-                response = dict(response, **json.loads(line))
-        return response
-    except HTTPException as ex:
-        raise ex
-    except Exception as ex:
-        return errorHandler.errorResponse(None, None, ex, serverError=True)
+def get_logs():
+    return base_functions.get_creation_logs()
 
 def run():
     uvicorn.run(app, port=port, host=host)

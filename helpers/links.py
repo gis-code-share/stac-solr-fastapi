@@ -35,13 +35,13 @@ def _get_alternate_link(p: LinkParameters):
 def _get_next_link(p: LinkParameters):
     if (p.start + p.numberReturned) < p.numberMatched and defaultLimit != 0:
         start_url, separator, end = prepare_url_parts(p.request)
-        url = start_url + separator + str(p.start + p.numberReturned) + end
+        url = start_url + separator + str(int(p.start) + int(p.numberReturned)) + end
         return Link(RelType.NEXT, target=url, media_type= "application/geo+json")
 
 def _get_previous_link(p: LinkParameters):
     if p.start >= p.numberReturned and p.numberReturned != 0:
         start_url, separator, end = prepare_url_parts(p.request)
-        url = start_url + separator + str(p.start - p.limit) + end
+        url = start_url + separator + str(int(p.start) - int(p.limit)) + end
         return Link(RelType.PREV, target=url, media_type= "application/geo+json")
 
 _get_search_links_functions = [ _get_next_link, _get_previous_link]

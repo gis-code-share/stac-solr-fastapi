@@ -173,7 +173,16 @@ def test_200_get_search_with_limit(test_data):
     assert response.status_code == 200
     assert response.json()["type"] == "FeatureCollection"
     assert len(response.json()["features"]) == 1
-
+    
+def test_200_get_search_with_limit_and_start(test_data):
+    limit = 1
+    response = client.get( test_data["root"] + "/search?limit=" + str(limit) + "&start=" + str(limit))
+    assert response.status_code == 200
+    assert response.json()["type"] == "FeatureCollection"
+    assert len(response.json()["features"]) == 1
+    assert "prev" in str(response.json()["links"])
+    assert "api/stac/test/search?limit=1&start=0" in str(response.json()["links"])
+    
 ## SEARCH COLLECTIONS
 def test_200_get_search_in_one_coll(test_data):
     response = client.get( test_data["root"] + "/search?collections=" + test_data["tested_collection_id"] )

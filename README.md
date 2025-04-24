@@ -1,5 +1,5 @@
 # stac-solr-fastapi
-STAC API implementation using Python FastAPI and Apache Solr
+STAC API implementation using Python FastAPI and Apache Solr (Solr related information is included in [serparate readme](configuration/solr-8.6.3_configs/README.md))
 
 # STAC API mit Lucene
 
